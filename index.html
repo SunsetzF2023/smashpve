@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Slingshot Portal — 弹弓传送门</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <!-- 用户认证界面 -->
+    <div id="authContainer" class="auth-container">
+      <div class="auth-panel">
+        <div class="auth-header">
+          <h1 class="game-title">🏹 弹弓传送门</h1>
+          <p class="game-subtitle">守护传送门，击败怪物大军！</p>
+        </div>
+        
+        <!-- 登录表单 -->
+        <div id="loginForm" class="auth-form">
+          <h2>欢迎回来</h2>
+          <div class="form-group">
+            <label for="loginEmail">邮箱地址</label>
+            <input type="email" id="loginEmail" placeholder="请输入邮箱" required>
+          </div>
+          <div class="form-group">
+            <label for="loginPassword">密码</label>
+            <input type="password" id="loginPassword" placeholder="请输入密码" required>
+          </div>
+          <button id="loginBtn" class="auth-btn primary">登录游戏</button>
+          <p class="auth-switch">
+            还没有账号？<a href="#" id="showRegister">立即注册</a>
+          </p>
+        </div>
+        
+        <!-- 注册表单 -->
+        <div id="registerForm" class="auth-form hidden">
+          <h2>创建新账号</h2>
+          <div class="form-group">
+            <label for="registerUsername">用户名</label>
+            <input type="text" id="registerUsername" placeholder="请输入用户名" required>
+          </div>
+          <div class="form-group">
+            <label for="registerEmail">邮箱地址</label>
+            <input type="email" id="registerEmail" placeholder="请输入邮箱" required>
+          </div>
+          <div class="form-group">
+            <label for="registerPassword">密码</label>
+            <input type="password" id="registerPassword" placeholder="请输入密码（至少6位）" required>
+          </div>
+          <div class="form-group">
+            <label for="confirmPassword">确认密码</label>
+            <input type="password" id="confirmPassword" placeholder="请再次输入密码" required>
+          </div>
+          <button id="registerBtn" class="auth-btn primary">注册账号</button>
+          <p class="auth-switch">
+            已有账号？<a href="#" id="showLogin">立即登录</a>
+          </p>
+        </div>
+        
+        <!-- 游戏说明 -->
+        <div class="game-features">
+          <div class="feature">
+            <span class="feature-icon">💰</span>
+            <span class="feature-text">永久存档，跨设备同步</span>
+          </div>
+          <div class="feature">
+            <span class="feature-icon">🎴</span>
+            <span class="feature-text">收集卡牌，抽奖系统</span>
+          </div>
+          <div class="feature">
+            <span class="feature-icon">⚔️</span>
+            <span class="feature-text">策略塔防，无尽挑战</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 游戏主界面 -->
+    <div id="gameContainer" class="hidden">
+      <div id="app">
+        <canvas id="game" aria-label="game canvas"></canvas>
+
+        <div id="hud">
+          <div class="hud-row">
+            <div class="pill" id="hudDay">Day 1</div>
+            <div class="pill" id="hudMana">Mana 0/10</div>
+            <div class="pill" id="hudPortal">Portal 100/100</div>
+          </div>
+          <div class="hud-row bottom">
+            <div class="pill" id="hudWall">Wall 50/50</div>
+            <div class="hint" id="hudHint">选择一张角色卡 → 在弹弓上拖拽并松手发射</div>
+          </div>
+        </div>
+
+        <div id="cards" aria-label="cards bar"></div>
+
+        <!-- 用户信息栏 -->
+        <div class="user-info">
+          <div class="user-details">
+            <span class="user-name" id="currentUserName">玩家</span>
+            <span class="user-email" id="currentUserEmail"></span>
+          </div>
+          <button id="logoutBtn" class="logout-btn">退出登录</button>
+        </div>
+
+        <!-- 加点系统界面 -->
+        <div id="upgradePanel" class="upgrade-panel">
+          <div class="upgrade-title">加点系统</div>
+          <div class="upgrade-stats">
+            <div class="upgrade-stat">
+              <span class="upgrade-label">累计击杀:</span>
+              <span class="upgrade-value" id="totalKills">0</span>
+            </div>
+            <div class="upgrade-stat">
+              <span class="upgrade-label">金币:</span>
+              <span class="upgrade-value" id="totalCoins">0</span>
+            </div>
+          </div>
+          <div class="lottery-section">
+            <div class="lottery-title">抽奖系统</div>
+            <div class="lottery-desc">100金币抽奖获得新卡牌（永久保留）</div>
+            <button id="lotteryBtn" class="lottery-btn" disabled>抽奖 (100金币)</button>
+            <div id="lotteryResult" class="lottery-result hidden"></div>
+          </div>
+        </div>
+
+        <div id="overlay" class="hidden" role="dialog" aria-modal="true">
+          <div class="panel">
+            <div class="title" id="overlayTitle"></div>
+            <div class="desc" id="overlayDesc"></div>
+            <button id="overlayBtn" class="primary"></button>
+          </div>
+        </div>
+
+        <div id="buildOverlay" class="hidden" role="dialog" aria-modal="true">
+          <div class="panel build-panel">
+            <div class="title">建设基地</div>
+            <div class="build-stats">
+              <div class="stat-item">
+                <span class="stat-label">当前存档:</span>
+                <span class="stat-value" id="currentSaveName">默认存档</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">金币:</span>
+                <span class="stat-value" id="buildCoins">0</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">最高天数:</span>
+                <span class="stat-value" id="buildBestDay">1</span>
+              </div>
+            </div>
+            
+            <div class="save-management">
+              <div class="section-title">存档管理</div>
+              <div class="save-slots" id="saveSlots">
+                <!-- 动态生成存档槽位 -->
+              </div>
+              <div class="save-actions">
+                <input type="text" id="newSaveName" placeholder="输入存档名称" maxlength="20">
+                <button id="createNewSaveBtn" class="secondary-btn">新建存档</button>
+              </div>
+            </div>
+            
+            <div class="build-actions">
+              <button id="backToGameBtn" class="secondary-btn">返回游戏</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 游戏脚本 -->
+    <script defer src="./game.js"></script>
+  </body>
+</html>
