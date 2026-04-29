@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>Slingshot Portal — 弹弓传送门</title>
     <link rel="stylesheet" href="./style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   </head>
   <body>
     <!-- 用户认证界面 -->
@@ -122,6 +123,9 @@
             <button id="lotteryBtn" class="lottery-btn" disabled>抽奖 (100金币)</button>
             <div id="lotteryResult" class="lottery-result hidden"></div>
           </div>
+          <div class="lottery-section">
+            <button id="leaderboardBtn" class="lottery-btn">🏆 排行榜</button>
+          </div>
         </div>
 
         <div id="overlay" class="hidden" role="dialog" aria-modal="true">
@@ -181,6 +185,20 @@
             <div class="lottery-result" id="lotteryResult"></div>
             <div class="lottery-actions">
               <button id="closeLotteryBtn" class="secondary-btn">关闭</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="leaderboardOverlay" class="hidden" role="dialog" aria-modal="true">
+          <div class="panel leaderboard-panel">
+            <div class="title">🏆 排行榜</div>
+            <div class="leaderboard-content">
+              <div class="leaderboard-list" id="leaderboardList">
+                <!-- 排行榜数据动态生成 -->
+              </div>
+            </div>
+            <div class="leaderboard-actions">
+              <button id="closeLeaderboardBtn" class="secondary-btn">关闭</button>
             </div>
           </div>
         </div>

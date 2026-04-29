@@ -256,6 +256,15 @@
   // 加点系统元素
   const totalKillsEl = document.getElementById("totalKills");
   const totalCoinsEl = document.getElementById("totalCoins");
+  const leaderboardBtn = document.getElementById("leaderboardBtn");
+  const leaderboardOverlay = document.getElementById("leaderboardOverlay");
+  const leaderboardList = document.getElementById("leaderboardList");
+  const closeLeaderboardBtn = document.getElementById("closeLeaderboardBtn");
+
+  // Supabase 初始化
+  const supabaseUrl = 'https://kqgsmoqjergkvymylmgq.supabase.co';
+  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtxZ3Ntb3FqZXJna3Z5bXlsbWdxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0Mzk4MzIsImV4cCI6MjA5MzAxNTgzMn0.6ro9-NpHKV8heh5OxtJp_T6PeNeNDTVukctKAnu6DxI';
+  const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
   const lotteryBtn = document.getElementById("lotteryBtn");
   const lotteryResultEl = document.getElementById("lotteryResult");
 
@@ -3775,30 +3784,115 @@
   
   function onGameOver() {
     if (pausedOverlay) return;
-    
+
     // 播放失败音效
     soundSystem.play('gameOver');
-    
+
     // 保存当前进度
     saveProgress();
-    
+
     // 计算游戏奖励
     const rewards = calculateGameRewards();
     gameProgress.coins += rewards.coins;
-    
+
     // 更新最高天数
     if (day > gameProgress.bestDay) {
       gameProgress.bestDay = day;
     }
-    
+
     saveProgress();
-    
+
+    // 提交分数到排行榜
+    submitScoreToLeaderboard(day, rewards.kills);
+
     showOverlay(
       "城墙被突破了…",
       `你坚持到了第 ${day} 天。\n\n获得奖励：${rewards.coins} 金币\n总击杀：${rewards.kills}\n\n点按钮重新开始（从第 1 天）。`,
       "重新开始"
     );
   }
+
+  // 提交分数到排行榜
+  async function submitScoreToLeaderboard(day, kills) {
+    try {
+      const userEmail = currentUserEmailEl.textContent || 'anonymous';
+      const userName = currentUserNameEl.textContent || 'Anonymous';
+
+      // 计算总分：天数 * 100 + 击杀数
+      const score = day * 100 + kills;
+
+      const { data, error } = await supabase
+        .from('leaderboard')
+        .insert([
+          {
+            user_email: userEmail,
+            user_name: userName,
+            score: score,
+            day: day,
+            kills: kills,
+            created_at: new Date().toISOString()
+          }
+        ]);
+
+      if (error) {
+        console.error('Failed to submit score:', error);
+      }
+    } catch (e) {
+      console.error('Error submitting score:', e);
+    }
+  }
+
+  // 获取排行榜数据
+  async function fetchLeaderboard() {
+    try {
+      const { data, error } = await supabase
+        .from('leaderboard')
+        .select('*')
+        .order('score', { ascending: false })
+        .limit(10);
+
+      if (error) {
+        console.error('Failed to fetch leaderboard:', error);
+        return [];
+      }
+
+      return data || [];
+    } catch (e) {
+      console.error('Error fetching leaderboard:', e);
+      return [];
+    }
+  }
+
+  // 显示排行榜
+  async function showLeaderboard() {
+    leaderboardList.innerHTML = '<div style="text-align: center; color: var(--muted);">加载中...</div>';
+    leaderboardOverlay.classList.remove("hidden");
+
+    const leaderboardData = await fetchLeaderboard();
+
+    if (leaderboardData.length === 0) {
+      leaderboardList.innerHTML = '<div style="text-align: center; color: var(--muted);">暂无数据</div>';
+      return;
+    }
+
+    leaderboardList.innerHTML = leaderboardData.map((item, index) => `
+      <div class="leaderboard-item">
+        <div class="leaderboard-rank">${index + 1}</div>
+        <div class="leaderboard-name">${item.user_name || 'Anonymous'}</div>
+        <div class="leaderboard-score">${item.score}</div>
+      </div>
+    `).join('');
+  }
+
+  // 排行榜按钮事件
+  leaderboardBtn.addEventListener("click", () => {
+    showLeaderboard();
+  });
+
+  // 关闭排行榜
+  closeLeaderboardBtn.addEventListener("click", () => {
+    leaderboardOverlay.classList.add("hidden");
+  });
 
   overlayBtn.addEventListener("click", () => {
     // 防止在非正常状态下点击
