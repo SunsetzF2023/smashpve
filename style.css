@@ -966,6 +966,20 @@ button.primary:active { transform: translateY(1px); }
   white-space: nowrap;
 }
 
+.leaderboard-details {
+  display: flex;
+  gap: 12px;
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-right: 12px;
+}
+
+.leaderboard-details span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
 .leaderboard-score {
   font-weight: 700;
   color: var(--primary);

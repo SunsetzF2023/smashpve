@@ -3825,7 +3825,9 @@
         .insert([
           {
             username: userName,
-            score: score
+            score: score,
+            kills: kills,
+            days: day
           }
         ]);
 
@@ -3874,6 +3876,10 @@
       <div class="leaderboard-item">
         <div class="leaderboard-rank">${index + 1}</div>
         <div class="leaderboard-name">${item.username || 'Anonymous'}</div>
+        <div class="leaderboard-details">
+          <span>📅 ${item.days || 0}天</span>
+          <span>⚔️ ${item.kills || 0}击杀</span>
+        </div>
         <div class="leaderboard-score">${item.score}</div>
       </div>
     `).join('');
