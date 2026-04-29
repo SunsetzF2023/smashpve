@@ -1888,7 +1888,7 @@
       
       // body
       const grd = g.createRadialGradient(-this.r * 0.35, -this.r * 0.35, 6, 0, 0, this.r);
-      grd.addColorStop(0, "#fff");
+      grd.addColorStop(0, "#cdd6f4");
       grd.addColorStop(0.2, c);
       grd.addColorStop(1, shade(c, -18));
       g.fillStyle = grd;
@@ -2698,12 +2698,12 @@
         g.fillStyle = bossBarColor;
         g.fillRect(-barW/2, barY, barW * hpP, barH);
         
-        g.strokeStyle = "#ffffff";
+        g.strokeStyle = "#cdd6f4";
         g.lineWidth = 2;
         g.strokeRect(-barW/2, barY, barW, barH);
         
         // Boss名称
-        g.fillStyle = "#ffffff";
+        g.fillStyle = "#cdd6f4";
         g.font = "bold 14px sans-serif";
         g.textAlign = "center";
         g.fillText("MEGA BOSS", 0, barY - 5);
@@ -2738,9 +2738,9 @@
 
         // body
         const grd = g.createRadialGradient(-this.r * 0.25, -this.r * 0.35, 6, 0, 0, this.r);
-        grd.addColorStop(0, "#ffffff");
-        grd.addColorStop(0.18, c);
-        grd.addColorStop(1, shade(c, -22));
+        grd.addColorStop(0, "#cdd6f4");
+        grd.addColorStop(0.4, c);
+        grd.addColorStop(1, shade(c, -25));
         g.fillStyle = grd;
         g.strokeStyle = "rgba(0,0,0,0.12)";
         g.lineWidth = 3;
@@ -2777,7 +2777,7 @@
 
         // ghost tail (wavy bottom)
         if (isGhost) {
-          g.fillStyle = withAlpha("#ffffff", 0.55);
+          g.fillStyle = withAlpha("#cdd6f4", 0.55);
           g.beginPath();
           const yy = this.r * 0.55;
           g.moveTo(-this.r * 0.7, yy);
@@ -3468,7 +3468,7 @@
     // 混合两种角色的颜色（简单混合）
     puff(midX, midY, r1.card.color, Math.min(8, Math.floor(avgSp * 0.06)));
     puff(midX, midY, r2.card.color, Math.min(8, Math.floor(avgSp * 0.06)));
-    sparkle(midX, midY, "#ffffff", Math.min(6, Math.floor(avgSp * 0.04)));
+    sparkle(midX, midY, "#cdd6f4", Math.min(6, Math.floor(avgSp * 0.04)));
 
     // 高速碰撞时，会互相加速消耗寿命（模拟"碰撞磨损"）
     if (avgSp > 180) {
@@ -4049,7 +4049,7 @@
     const x = clamp(SLING.x + n.x * 12, ARENA.l + card.radius, ARENA.r - card.radius);
     const y = clamp(SLING.y + n.y * 12, ARENA.t + card.radius, ARENA.b - card.radius);
     roles.push(new Role(card, x, y, vx, vy));
-    sparkle(SLING.x, SLING.y, "#ffffff", 10);
+    sparkle(SLING.x, SLING.y, "#cdd6f4", 10);
     soundSystem.play('shoot');
     selectedCardId = null;
     setHint();
@@ -4297,7 +4297,7 @@
     g.fill();
 
     const ring = g.createRadialGradient(PORTAL.x - 18, PORTAL.y - 18, 6, PORTAL.x, PORTAL.y, PORTAL.r);
-    ring.addColorStop(0, "#fff");
+    ring.addColorStop(0, "#cdd6f4");
     ring.addColorStop(0.2, "#ff76b6");
     ring.addColorStop(1, "#b347ff");
     g.fillStyle = ring;
