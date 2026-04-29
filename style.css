@@ -16,7 +16,8 @@ body {
   margin: 0;
   font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans CJK SC", "Microsoft YaHei", sans-serif;
   color: var(--ink);
-  background: #008b8b;
+  background: #121212;
+  background-image: none;
   overflow: hidden;
 }
 

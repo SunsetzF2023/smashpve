@@ -4173,7 +4173,7 @@
 
   function draw() {
     // clear full screen
-    ctx.fillStyle = "#008b8b";
+    ctx.fillStyle = "#121212";
     ctx.fillRect(0, 0, view.w, view.h);
 
     ctx.save();
