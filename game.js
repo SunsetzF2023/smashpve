@@ -4254,18 +4254,7 @@
   }
 
   function drawBackground(g) {
-    // candy clouds
-    for (let i = 0; i < 8; i++) {
-      const x = (i * 97 + (day * 33) % 50) % (WORLD.w + 140) - 70;
-      const y = 52 + (i % 3) * 38 + Math.sin((now * 0.35 + i) * 0.7) * 6;
-      const w = 150 + (i % 3) * 40;
-      g.fillStyle = "rgba(255,255,255,0.65)";
-      g.beginPath();
-      g.ellipse(x, y, w * 0.45, 22, 0, 0, Math.PI * 2);
-      g.ellipse(x + 38, y - 10, w * 0.34, 18, 0, 0, Math.PI * 2);
-      g.ellipse(x - 32, y - 6, w * 0.26, 16, 0, 0, Math.PI * 2);
-      g.fill();
-    }
+    // Removed candy clouds for dark theme
   }
 
   function drawArena(g) {
