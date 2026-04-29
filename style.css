@@ -1,7 +1,7 @@
 :root {
   --bg0: #1e1e2e;
   --bg1: #181825;
-  --ink: #cdd6f4;
+  --ink: #e0e0e0;
   --muted: #a6adc8;
   --pill: rgba(30, 30, 46, 0.85);
   --pill-border: rgba(137, 180, 250, 0.15);
@@ -62,6 +62,8 @@ canvas#game {
   box-shadow: 0 10px 30px var(--shadow);
   font-weight: 650;
   letter-spacing: 0.2px;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
 }
 
 .hint {
@@ -113,8 +115,9 @@ canvas#game {
 }
 
 .card:hover {
-  transform: translateY(-1px);
+  transform: translateY(-5px);
   border-color: rgba(255, 90, 165, 0.65);
+  box-shadow: 0 8px 20px rgba(255, 90, 165, 0.4);
 }
 
 .card.selected {
@@ -178,8 +181,8 @@ canvas#game {
 .panel {
   width: min(520px, 92vw);
   border-radius: 22px;
-  background: rgba(255, 255, 255, 0.92);
-  border: 1px solid rgba(0, 0, 0, 0.10);
+  background: rgba(30, 30, 46, 0.95);
+  border: 1px solid rgba(137, 180, 250, 0.2);
   box-shadow: 0 30px 60px rgba(0, 0, 0, 0.18);
   padding: 16px 16px 14px;
 }
@@ -735,20 +738,20 @@ button.primary:active { transform: translateY(1px); }
 }
 
 .lottery-section {
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid rgba(137, 180, 250, 0.2);
   padding-top: 15px;
 }
 
 .lottery-title {
   font-size: 1.1rem;
   font-weight: 600;
-  color: #2d3748;
+  color: var(--ink);
   margin-bottom: 8px;
   text-align: center;
 }
 
 .lottery-desc {
-  color: #718096;
+  color: var(--muted);
   font-size: 0.85rem;
   margin-bottom: 15px;
   text-align: center;
@@ -758,7 +761,7 @@ button.primary:active { transform: translateY(1px); }
 .lottery-btn {
   width: 100%;
   padding: 12px 16px;
-  background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+  background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
   color: white;
   border: none;
   border-radius: 10px;
@@ -791,14 +794,14 @@ button.primary:active { transform: translateY(1px); }
 }
 
 .lottery-result.success {
-  background: #313244;
-  color: #22543d;
+  background: #1e1e2e;
+  color: #9ae6b4;
   border: 1px solid #9ae6b4;
 }
 
 .lottery-result.error {
-  background: #313244;
-  color: #742a2a;
+  background: #1e1e2e;
+  color: #fc8181;
   border: 1px solid #fc8181;
 }
 

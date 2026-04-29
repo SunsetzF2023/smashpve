@@ -4262,10 +4262,14 @@
     g.fillStyle = "rgba(255,120,184,0.08)";
     g.fillRect(ARENA.l - 10, ARENA.t - 10, (ARENA.r - ARENA.l) + 20, (ARENA.b - ARENA.t) + 20);
 
-    // arena base
-    const grd = g.createLinearGradient(0, ARENA.t, 0, ARENA.b);
-    grd.addColorStop(0, "rgba(255,255,255,0.82)");
-    grd.addColorStop(1, "rgba(255,255,255,0.62)");
+    // arena base with radial gradient for smoother edge blending
+    const centerX = (ARENA.l + ARENA.r) / 2;
+    const centerY = (ARENA.t + ARENA.b) / 2;
+    const radius = Math.max(ARENA.r - ARENA.l, ARENA.b - ARENA.t) / 2;
+    const grd = g.createRadialGradient(centerX, centerY, 0, centerX, centerY, radius);
+    grd.addColorStop(0, "rgba(255,255,255,0.75)");
+    grd.addColorStop(0.6, "rgba(255,255,255,0.55)");
+    grd.addColorStop(1, "rgba(255,255,255,0.35)");
     g.fillStyle = grd;
     g.strokeStyle = "rgba(0,0,0,0.10)";
     g.lineWidth = 4;
