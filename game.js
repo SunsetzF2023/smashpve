@@ -1163,6 +1163,7 @@
 
   // 伤害数字显示系统
   let damageNumbers = [];
+  let goldTexts = [];
 
   function showDamageNumber(x, y, damage, type = "normal") {
     const colors = {
@@ -1171,7 +1172,7 @@
       heal: "#44ff44",
       burn: "#ff6b35"
     };
-    
+
     damageNumbers.push({
       x: x,
       y: y,
@@ -1180,6 +1181,17 @@
       t: 0,
       dur: 1.5,
       vy: -60 // 向上飘的速度
+    });
+  }
+
+  function showGoldText(x, y, amount) {
+    goldTexts.push({
+      x: x,
+      y: y,
+      amount: amount,
+      t: 0,
+      dur: 2.0,
+      vy: -50 // 向上飘的速度
     });
   }
 
@@ -2580,13 +2592,16 @@
         gameProgress.totalKills++;
         
         // 根据怪物类型给予金币奖励
-        let coinReward = 1;
-        if (this.kind === "elite") coinReward = 3;
-        else if (this.kind === "boss") coinReward = 5;
-        else if (this.kind === "megaboss") coinReward = 10;
-        
+        let coinReward = Math.floor(rand(10, 21));
+        if (this.kind === "elite") coinReward = 100;
+        else if (this.kind === "boss") coinReward = 50;
+        else if (this.kind === "megaboss") coinReward = 200;
+
         gameProgress.coins += coinReward;
         updateUpgradePanel();
+
+        // 显示金币浮动文字
+        showGoldText(this.x, this.y, coinReward);
         
         // 如果是吸血怪物，给所有角色卡添加吸血效果
         if (this.kind === "vampire") {
@@ -2994,11 +3009,11 @@
     for (const dn of damageNumbers) {
       const a = 1 - dn.t / dn.dur;
       const scale = 1.0 + (1 - a) * 0.5; // 开始时稍大，逐渐缩小
-      
+
       g.save();
       g.translate(dn.x, dn.y);
       g.scale(scale, scale);
-      
+
       // 描边
       g.strokeStyle = "rgba(0, 0, 0, 0.8)";
       g.lineWidth = 3;
@@ -3006,11 +3021,44 @@
       g.textAlign = "center";
       g.textBaseline = "middle";
       g.strokeText(dn.damage.toString(), 0, 0);
-      
+
       // 填充
       g.fillStyle = withAlpha(dn.color, a);
       g.fillText(dn.damage.toString(), 0, 0);
-      
+
+      g.restore();
+    }
+  }
+
+  function updateGoldTexts(dt) {
+    for (const gt of goldTexts) {
+      gt.t += dt;
+      gt.y += gt.vy * dt;
+    }
+    goldTexts = goldTexts.filter((gt) => gt.t < gt.dur);
+  }
+
+  function drawGoldTexts(g) {
+    for (const gt of goldTexts) {
+      const a = 1 - gt.t / gt.dur;
+      const scale = 1.0 + (1 - a) * 0.3;
+
+      g.save();
+      g.translate(gt.x, gt.y);
+      g.scale(scale, scale);
+
+      // 描边
+      g.strokeStyle = "rgba(0, 0, 0, 0.8)";
+      g.lineWidth = 3;
+      g.font = "bold 18px sans-serif";
+      g.textAlign = "center";
+      g.textBaseline = "middle";
+      g.strokeText(`+${gt.amount} Gold`, 0, 0);
+
+      // 填充
+      g.fillStyle = withAlpha("#ffd700", a);
+      g.fillText(`+${gt.amount} Gold`, 0, 0);
+
       g.restore();
     }
   }
@@ -3835,54 +3883,175 @@
 
   // 加点系统事件监听器
   lotteryBtn.addEventListener("click", () => {
-    performLottery();
+    showLotteryOverlay();
   });
 
-  // 抽奖功能
-  function performLottery() {
+  const lotteryOverlay = document.getElementById("lotteryOverlay");
+  const lotteryStrip = document.getElementById("lotteryStrip");
+  const lotteryResult = document.getElementById("lotteryResult");
+  const closeLotteryBtn = document.getElementById("closeLotteryBtn");
+
+  // 奖池配置
+  const lotteryPrizes = [
+    { type: "boost", name: "全军强化", icon: "⚔️", weight: 25, effect: "attack" },
+    { type: "defense", name: "坚实后盾", icon: "🛡️", weight: 25, effect: "defense" },
+    { type: "clear", name: "清场法术", icon: "💥", weight: 15, effect: "clear" },
+    { type: "thanks", name: "谢谢惠顾", icon: "💰", weight: 35, effect: "refund" }
+  ];
+
+  let isRolling = false;
+
+  function showLotteryOverlay() {
     if (gameProgress.coins < 100) {
       showLotteryResult('金币不足！需要100金币才能抽奖。', 'error');
       return;
     }
-    
+
     // 扣除金币
     gameProgress.coins -= 100;
-    
-    // 抽奖卡池
-    const lotteryPool = ["angel", "bomber", "joker", "thor", "ninja", "robot"];
-    const wonCard = pick(lotteryPool);
-    
-    // 获取卡牌信息
-    const cardInfo = CARDS.find(card => card.id === wonCard);
-    const cardName = cardInfo ? cardInfo.name : wonCard;
-    
-    // 添加到用户永久收藏
-    const addedToCollection = addCardToCollection(wonCard);
-    
-    // 直接添加新卡牌到左侧，不替换任何卡牌
-    const cardsContainer = document.getElementById('cards');
-    
-    // 创建新卡牌元素
-    const newCard = createCardElement(cardInfo);
-    
-    // 添加到容器开头（左侧）
-    cardsContainer.insertBefore(newCard, cardsContainer.firstChild);
-    
-    // 显示抽奖结果
-    const message = addedToCollection 
-      ? `🎉 恭喜获得 ${cardName}！卡牌已永久保存到你的收藏中并添加到卡组。`
-      : `🎉 获得 ${cardName}！卡牌已添加到卡组。`;
-    
-    showLotteryResult(message, 'success');
-    
-    // 保存进度
-    saveProgress();
     updateUpgradePanel();
-    
-    console.log(`新卡牌 ${cardName} 已添加到卡组左侧`);
+
+    // 清空结果
+    lotteryResult.textContent = "";
+    lotteryResult.className = "lottery-result";
+
+    // 生成奖池条
+    generateLotteryStrip();
+
+    // 显示弹窗
+    lotteryOverlay.classList.remove("hidden");
+
+    // 开始滚动
+    startLotteryRoll();
   }
 
-  // ...
+  function generateLotteryStrip() {
+    lotteryStrip.innerHTML = "";
+    // 生成大量奖品用于滚动
+    for (let i = 0; i < 50; i++) {
+      const prize = selectPrize();
+      const item = document.createElement("div");
+      item.className = `lottery-item ${prize.type}`;
+      item.innerHTML = `
+        <div class="lottery-item-icon">${prize.icon}</div>
+        <div>${prize.name}</div>
+      `;
+      lotteryStrip.appendChild(item);
+    }
+  }
+
+  function selectPrize() {
+    const totalWeight = lotteryPrizes.reduce((sum, p) => sum + p.weight, 0);
+    let random = Math.random() * totalWeight;
+    for (const prize of lotteryPrizes) {
+      random -= prize.weight;
+      if (random <= 0) return prize;
+    }
+    return lotteryPrizes[0];
+  }
+
+  function startLotteryRoll() {
+    if (isRolling) return;
+    isRolling = true;
+
+    const items = lotteryStrip.children;
+    const itemWidth = 110; // 100px width + 10px margin
+    const totalWidth = items.length * itemWidth;
+    const windowWidth = lotteryStrip.parentElement.offsetWidth;
+    const centerOffset = windowWidth / 2 - itemWidth / 2;
+
+    // 随机选择中奖位置（在中间区域）
+    const targetIndex = Math.floor(Math.random() * 10) + 20; // 在中间10个奖品中随机
+    const targetPosition = targetIndex * itemWidth;
+
+    let currentPosition = 0;
+    let velocity = 50; // 初始速度
+    let acceleration = 0.98; // 减速系数
+    let animationId;
+
+    function animate() {
+      velocity *= acceleration;
+      currentPosition += velocity;
+
+      // 当速度足够慢且接近目标位置时停止
+      if (velocity < 0.5 && Math.abs(currentPosition - targetPosition) < 5) {
+        currentPosition = targetPosition;
+        lotteryStrip.style.transform = `translateX(-${currentPosition - centerOffset}px)`;
+        isRolling = false;
+        applyPrize(items[targetIndex]);
+        return;
+      }
+
+      // 循环滚动
+      if (currentPosition >= totalWidth - windowWidth) {
+        currentPosition = 0;
+      }
+
+      lotteryStrip.style.transform = `translateX(-${currentPosition - centerOffset}px)`;
+      animationId = requestAnimationFrame(animate);
+    }
+
+    animate();
+  }
+
+  function applyPrize(itemElement) {
+    const prizeType = itemElement.classList[1]; // 获取第二个class（boost, defense等）
+    const prize = lotteryPrizes.find(p => p.type === prizeType);
+
+    let message = "";
+    let resultClass = "success";
+
+    switch (prize.effect) {
+      case "attack":
+        // 全军强化：增加所有已上场卡牌10%攻击力
+        roles.forEach(role => {
+          if (!role.dead) {
+            role.card.damage = (role.card.damage || 1) * 1.1;
+          }
+        });
+        message = "全军强化！所有卡牌攻击力提升10%";
+        break;
+      case "defense":
+        // 坚实后盾：城墙恢复30%生命值
+        const maxWallHp = 100;
+        const healAmount = Math.floor(maxWallHp * 0.3);
+        wall.hp = Math.min(wall.hp + healAmount, maxWallHp);
+        message = `坚实后盾！城墙恢复${healAmount}点生命值`;
+        break;
+      case "clear":
+        // 清场法术：消灭所有普通怪物
+        let clearedCount = 0;
+        monsters = monsters.filter(m => {
+          if (m.kind === "elite" || m.kind === "boss" || m.kind === "megaboss") {
+            return true; // 保留精英和boss
+          }
+          clearedCount++;
+          return false; // 移除普通怪物
+        });
+        message = `清场法术！消灭了${clearedCount}只普通怪物`;
+        break;
+      case "refund":
+        // 谢谢惠顾：返还20金币
+        gameProgress.coins += 20;
+        updateUpgradePanel();
+        message = "谢谢惠顾！返还20金币";
+        resultClass = "error";
+        break;
+    }
+
+    lotteryResult.textContent = message;
+    lotteryResult.className = `lottery-result ${resultClass}`;
+  }
+
+  closeLotteryBtn.addEventListener("click", () => {
+    lotteryOverlay.classList.add("hidden");
+  });
+
+  // 抽奖功能（保留原函数用于兼容）
+  function performLottery() {
+    showLotteryOverlay();
+  }
+
   function updateUpgradePanel() {
     totalKillsEl.textContent = gameProgress.totalKills;
     totalCoinsEl.textContent = gameProgress.coins;
@@ -4163,6 +4332,7 @@
     updateEffects(dt);
     updateParticles(dt);
     updateDamageNumbers(dt);
+    updateGoldTexts(dt);
 
     // hint flash decay
     if (hintFlash > 0) {
@@ -4195,6 +4365,7 @@
 
     drawParticles(ctx);
     drawDamageNumbers(ctx);
+    drawGoldTexts(ctx);
     drawAim(ctx);
     drawTopFog(ctx);
 

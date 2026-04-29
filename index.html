@@ -166,10 +166,44 @@
             </div>
           </div>
         </div>
+
+        <div id="lotteryOverlay" class="hidden" role="dialog" aria-modal="true">
+          <div class="panel lottery-panel">
+            <div class="title">幸运抽奖</div>
+            <div class="lottery-container">
+              <div class="lottery-window">
+                <div class="lottery-pointer">▼</div>
+                <div class="lottery-strip" id="lotteryStrip">
+                  <!-- 奖池项目动态生成 -->
+                </div>
+              </div>
+            </div>
+            <div class="lottery-result" id="lotteryResult"></div>
+            <div class="lottery-actions">
+              <button id="closeLotteryBtn" class="secondary-btn">关闭</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- 游戏脚本 -->
+    <!-- 模块化游戏脚本 - 按顺序加载 -->
+    <script src="./js/config/gameConfig.js"></script>
+    <script src="./js/config/cardConfig.js"></script>
+    <script src="./js/core/helpers.js"></script>
+    <script src="./js/core/gameState.js"></script>
+    <script src="./js/core/gameLoop.js"></script>
+    <script src="./js/systems/soundSystem.js"></script>
+    <script src="./js/systems/authSystem.js"></script>
+    <script src="./js/systems/saveSystem.js"></script>
+    <script src="./js/systems/spawnSystem.js"></script>
+    <script src="./js/effects/damageNumbers.js"></script>
+    <script src="./js/effects/visualEffects.js"></script>
+    <script src="./js/entities/Role.js"></script>
+    <script src="./js/entities/Monster.js"></script>
+    <script src="./js/main.js"></script>
+    
+    <!-- 保留原game.js作为备份和核心逻辑补充 -->
     <script defer src="./game.js"></script>
   </body>
 </html>
