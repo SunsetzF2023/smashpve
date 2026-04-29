@@ -3815,7 +3815,6 @@
   // 提交分数到排行榜
   async function submitScoreToLeaderboard(day, kills) {
     try {
-      const userEmail = currentUserEmailEl.textContent || 'anonymous';
       const userName = currentUserNameEl.textContent || 'Anonymous';
 
       // 计算总分：天数 * 100 + 击杀数
@@ -3825,12 +3824,8 @@
         .from('leaderboard')
         .insert([
           {
-            user_email: userEmail,
-            user_name: userName,
-            score: score,
-            day: day,
-            kills: kills,
-            created_at: new Date().toISOString()
+            username: userName,
+            score: score
           }
         ]);
 
@@ -3878,7 +3873,7 @@
     leaderboardList.innerHTML = leaderboardData.map((item, index) => `
       <div class="leaderboard-item">
         <div class="leaderboard-rank">${index + 1}</div>
-        <div class="leaderboard-name">${item.user_name || 'Anonymous'}</div>
+        <div class="leaderboard-name">${item.username || 'Anonymous'}</div>
         <div class="leaderboard-score">${item.score}</div>
       </div>
     `).join('');
