@@ -3884,6 +3884,9 @@
     }
   }
 
+  // 实时订阅排行榜更新
+  let leaderboardSubscription = null;
+
   // 显示排行榜
   async function showLeaderboard() {
     leaderboardList.innerHTML = '<div style="text-align: center; color: var(--muted);">加载中...</div>';
@@ -3893,9 +3896,34 @@
 
     if (leaderboardData.length === 0) {
       leaderboardList.innerHTML = '<div style="text-align: center; color: var(--muted);">暂无数据</div>';
-      return;
+    } else {
+      renderLeaderboard(leaderboardData);
     }
 
+    // 启用实时订阅
+    if (!leaderboardSubscription) {
+      console.log('启用排行榜实时订阅...');
+      leaderboardSubscription = supabase
+        .channel('leaderboard_changes')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'LeaderBoard' }, (payload) => {
+          console.log('排行榜数据更新:', payload);
+          // 重新获取排行榜数据
+          fetchLeaderboard().then(data => {
+            if (data.length === 0) {
+              leaderboardList.innerHTML = '<div style="text-align: center; color: var(--muted);">暂无数据</div>';
+            } else {
+              renderLeaderboard(data);
+            }
+          });
+        })
+        .subscribe((status) => {
+          console.log('订阅状态:', status);
+        });
+    }
+  }
+
+  // 渲染排行榜数据
+  function renderLeaderboard(leaderboardData) {
     leaderboardList.innerHTML = leaderboardData.map((item, index) => `
       <div class="leaderboard-item">
         <div class="leaderboard-rank">${index + 1}</div>
@@ -3917,6 +3945,12 @@
   // 关闭排行榜
   closeLeaderboardBtn.addEventListener("click", () => {
     leaderboardOverlay.classList.add("hidden");
+    // 取消实时订阅以节省资源
+    if (leaderboardSubscription) {
+      console.log('取消排行榜实时订阅...');
+      supabase.removeChannel(leaderboardSubscription);
+      leaderboardSubscription = null;
+    }
   });
 
   overlayBtn.addEventListener("click", () => {
