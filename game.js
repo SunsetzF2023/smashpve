@@ -3814,47 +3814,72 @@
   // 提交分数到排行榜
   async function submitScoreToLeaderboard(day, kills) {
     try {
+      console.log('开始提交分数到排行榜...');
+      console.log('Supabase 客户端状态:', supabase ? '已初始化' : '未初始化');
+
       const userName = currentUserNameEl.textContent || 'Anonymous';
+      console.log('用户名:', userName);
+      console.log('天数:', day, '击杀数:', kills);
 
       // 计算总分：天数 * 100 + 击杀数
       const score = day * 100 + kills;
+      console.log('计算得分:', score);
+
+      const insertData = {
+        username: userName,
+        score: score,
+        kills: kills,
+        days: day
+      };
+      console.log('插入数据:', insertData);
 
       const { data, error } = await supabase
-        .from('leaderboard')
-        .insert([
-          {
-            username: userName,
-            score: score,
-            kills: kills,
-            days: day
-          }
-        ]);
+        .from('LeaderBoard')
+        .insert([insertData]);
 
       if (error) {
-        console.error('Failed to submit score:', error);
+        console.error('提交分数失败 - 错误详情:', error);
+        console.error('错误消息:', error.message);
+        console.error('错误代码:', error.code);
+        console.error('错误详情:', error.details);
+        console.error('错误提示:', error.hint);
+      } else {
+        console.log('提交分数成功:', data);
       }
     } catch (e) {
-      console.error('Error submitting score:', e);
+      console.error('提交分数时发生异常:', e);
+      console.error('异常消息:', e.message);
+      console.error('异常堆栈:', e.stack);
     }
   }
 
   // 获取排行榜数据
   async function fetchLeaderboard() {
     try {
+      console.log('开始获取排行榜数据...');
+      console.log('Supabase 客户端状态:', supabase ? '已初始化' : '未初始化');
+
       const { data, error } = await supabase
-        .from('leaderboard')
+        .from('LeaderBoard')
         .select('*')
         .order('score', { ascending: false })
         .limit(10);
 
       if (error) {
-        console.error('Failed to fetch leaderboard:', error);
+        console.error('获取排行榜失败 - 错误详情:', error);
+        console.error('错误消息:', error.message);
+        console.error('错误代码:', error.code);
+        console.error('错误详情:', error.details);
+        console.error('错误提示:', error.hint);
         return [];
       }
 
+      console.log('获取排行榜成功，数据条数:', data ? data.length : 0);
       return data || [];
     } catch (e) {
-      console.error('Error fetching leaderboard:', e);
+      console.error('获取排行榜时发生异常:', e);
+      console.error('异常消息:', e.message);
+      console.error('异常堆栈:', e.stack);
       return [];
     }
   }
