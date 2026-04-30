@@ -1499,7 +1499,7 @@
         // damage portal
         // 如果游戏已经结束，不再造成伤害
         if (!gameEnded) {
-          const hitDmg = (this.m * 9 + Math.min(70, this.speed()) * 0.18) * modifiers.roleCollisionMul;
+          const hitDmg = (this.m * 9 + Math.min(70, this.speed()) * 0.18) * modifiers.roleCollisionMul * globalModifiers.attackBoost;
           dealPortal(hitDmg);
           sparkle(PORTAL.x, PORTAL.y + PORTAL.r * 0.15, "#ffd1ef", 14);
         }
@@ -1529,7 +1529,7 @@
           r0: 10,
           r1: eff.radius,
         });
-        hitMonstersInRadius(this.x, this.y, eff.radius, eff.dmg, eff.knock);
+        hitMonstersInRadius(this.x, this.y, eff.radius, eff.dmg * globalModifiers.attackBoost, eff.knock);
       } else if (eff.kind === "arrows") {
         const target = findBestMonsterTarget(this.x, this.y, eff.range);
         if (target) {
@@ -1543,8 +1543,8 @@
             dur: 0.12,
             color: "rgba(80,180,255,0.95)",
           });
-          target.takeDamage(eff.dmg);
-          showDamageNumber(target.x, target.y, eff.dmg, "normal");
+          target.takeDamage(eff.dmg * globalModifiers.attackBoost);
+          showDamageNumber(target.x, target.y, eff.dmg * globalModifiers.attackBoost, "normal");
           sparkle(target.x, target.y, "#b8f2ff", 8);
         } else {
           // 没有怪物时攻击传送门
@@ -1576,8 +1576,8 @@
             dur: 0.12,
             color: "rgba(100,200,255,0.95)",
           });
-          target.takeDamage(eff.dmg);
-          showDamageNumber(target.x, target.y, eff.dmg, "normal");
+          target.takeDamage(eff.dmg * globalModifiers.attackBoost);
+          showDamageNumber(target.x, target.y, eff.dmg * globalModifiers.attackBoost, "normal");
           
           // 添加冷冻减速效果
           if (!target.frostEffect) {
@@ -1632,8 +1632,8 @@
           color: "rgba(165,120,255,0.95)",
         });
         if (target) {
-          target.takeDamage(eff.dmg);
-          showDamageNumber(tx, ty, eff.dmg, "normal");
+          target.takeDamage(eff.dmg * globalModifiers.attackBoost);
+          showDamageNumber(target.x, target.y, eff.dmg * globalModifiers.attackBoost, "normal");
           sparkle(tx, ty, "#ead7ff", 10);
         } else {
           dealPortal(eff.portalDmg);
@@ -1729,13 +1729,12 @@
           t: 0,
           dur: 0.20,
           color: "rgba(255,210,90,0.95)",
-          r: eff.radius,
         });
         for (const m of monsters) {
           const d = Math.hypot(m.x - this.x, m.y - this.y);
           if (d <= eff.radius + m.r) {
-            m.takeDamage(eff.dmg);
-            showDamageNumber(m.x, m.y, eff.dmg, "normal");
+            m.takeDamage(eff.dmg * globalModifiers.attackBoost);
+            showDamageNumber(m.x, m.y, eff.dmg * globalModifiers.attackBoost, "normal");
             m.slowTimer = Math.max(m.slowTimer, 0.55);
             m.slowMul = Math.min(m.slowMul, eff.slow);
           }
@@ -1763,8 +1762,8 @@
             dur: 0.15,
             color: "rgba(65, 105, 225, 0.9)",
           });
-          target.takeDamage(eff.dmg);
-          showDamageNumber(target.x, target.y, eff.dmg, "normal");
+          target.takeDamage(eff.dmg * globalModifiers.attackBoost);
+          showDamageNumber(target.x, target.y, eff.dmg * globalModifiers.attackBoost, "normal");
           sparkle(target.x, target.y, "#4169e1", 10);
           
           // 连锁闪电
@@ -2150,7 +2149,7 @@
         color = "#8b0000"; // 深红色
       }
 
-      this.maxHp = Math.round(baseHp * (1 + dayMul * 0.10) * hpMul);
+      this.maxHp = Math.round(baseHp * (1 + dayMul * 0.10) * hpMul * globalModifiers.hpBoost);
       this.hp = this.maxHp;
       this.r = radius;
       this.x = x;
@@ -3539,8 +3538,8 @@
     // collision damage (always some)
     const sp = Math.min(260, role.speed());
     const base = 7 + role.m * 5;
-    const dmg = (base + sp * 0.05) * modifiers.roleCollisionMul;
-    
+    const dmg = (base + sp * 0.05) * modifiers.roleCollisionMul * globalModifiers.attackBoost;
+
     m.takeDamage(dmg);
     showDamageNumber((role.x + m.x) / 2, (role.y + m.y) / 2, dmg, "normal");
     puff((role.x + m.x) / 2, (role.y + m.y) / 2, "rgba(255,255,255,0.55)", 8);
@@ -4014,6 +4013,9 @@
     if (isRolling) return;
     isRolling = true;
 
+    // 重置滚动条位置到零
+    lotteryStrip.style.transform = 'translateX(0)';
+
     const items = lotteryStrip.children;
     const itemWidth = 110; // 100px width + 10px margin
     const totalWidth = items.length * itemWidth;
@@ -4063,12 +4065,8 @@
 
     switch (prize.effect) {
       case "attack":
-        // 全军强化：增加所有已上场卡牌10%攻击力
-        roles.forEach(role => {
-          if (!role.dead) {
-            role.card.damage = (role.card.damage || 1) * 1.1;
-          }
-        });
+        // 全军强化：增加全局攻击力倍率10%
+        globalModifiers.attackBoost *= 1.1;
         message = "全军强化！所有卡牌攻击力提升10%";
         break;
       case "defense":

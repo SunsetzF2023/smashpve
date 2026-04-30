@@ -41,6 +41,12 @@ let modifiers = {
   maxManaBonus: 0,
 };
 
+// 全局修正器（用于抽奖奖励）
+let globalModifiers = {
+  attackBoost: 1, // 攻击力倍率
+  hpBoost: 1, // 血量倍率
+};
+
 export function getGameState() {
   return {
     now,
@@ -59,7 +65,8 @@ export function getGameState() {
     monsters,
     shots,
     effects,
-    modifiers
+    modifiers,
+    globalModifiers
   };
 }
 
@@ -81,6 +88,7 @@ export function setGameState(state) {
   shots = state.shots;
   effects = state.effects;
   modifiers = state.modifiers;
+  globalModifiers = state.globalModifiers;
 }
 
 // 重置游戏状态
@@ -108,6 +116,10 @@ export function resetGameState() {
     manaRegenMul: 1,
     wallMaxHpBonus: 0,
     maxManaBonus: 0,
+  };
+  globalModifiers = {
+    attackBoost: 1,
+    hpBoost: 1,
   };
 }
 

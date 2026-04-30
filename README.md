@@ -1,131 +1,131 @@
-# Smash Defender - 弹弓传送门
+# Smash Defender
 
-一款基于HTML5 Canvas的塔防策略游戏，通过发射卡牌单位守护传送门，击败怪物大军。
+A tower defense strategy game built with HTML5 Canvas. Defend the portal by launching card units and defeat the monster army.
 
-## 🎮 游戏特色
+## 🎮 Game Features
 
-- **卡牌系统**：11种角色卡牌 + 4种法术卡牌
-- **用户系统**：注册登录、云端存档、跨设备同步
-- **抽奖系统**：收集稀有卡牌，永久保留
-- **加点系统**：累计击杀解锁能力提升
-- **粒子特效**：丰富的视觉反馈和伤害数字
-- **音效系统**：动态生成的游戏音效
+- **Card System**: 11 role cards + 4 spell cards
+- **User System**: Registration, login, cloud save, cross-device sync
+- **Gacha System**: Collect rare cards, permanent collection
+- **Upgrade System**: Unlock abilities through cumulative kills
+- **Particle Effects**: Rich visual feedback and damage numbers
+- **Sound System**: Dynamically generated game sound effects
 
-## 🚀 快速开始
+## 🚀 Quick Start
 
-### 在线游玩
+### Play Online
 
-访问 GitHub Pages 部署地址（配置后可访问）
+Visit the GitHub Pages deployment URL (after configuration)
 
-### 本地运行
+### Local Development
 
-1. 克隆仓库
+1. Clone the repository
 ```bash
 git clone https://github.com/SunsetzF2023/smashpve.git
 cd smashpve
 ```
 
-2. 使用任意静态服务器运行
+2. Run with any static server
 ```bash
-# 使用 Python
+# Using Python
 python -m http.server 8000
 
-# 使用 Node.js (需要 http-server)
+# Using Node.js (requires http-server)
 npx http-server
 
-# 或直接用浏览器打开 index.html
+# Or open index.html directly in browser
 ```
 
-## 🎴 卡牌介绍
+## 🎴 Card Introduction
 
-### 角色卡牌
+### Role Cards
 
-| 卡牌 | 费用 | 描述 |
-|------|------|------|
-| 棉花骑士 | 2 | 停下后：冲击波，震开附近怪物 |
-| 糖霜弓手 | 3 | 停下后：寒霜箭矢，减速敌人并造成持续伤害 |
-| 果冻法师 | 4 | 停下后：法术射线，同时灼烧传送门 |
-| 软糖大盾 | 3 | 更重更大：碰撞伤害更高，死亡时爆炸 |
-| 烈焰法师 | 5 | 灼烧攻击：持续性射线，高频伤害数字 |
-| 治愈天使 | 4 | 停下后：治疗附近队友，若无队友则攻击敌人 |
-| 炸弹人 | 3 | 自动寻敌：接近敌人自爆造成高额范围伤害 |
-| 疯狂小丑 | 3 | 混乱撞击：让敌人无差别攻击，停止后八方弹射 |
-| 雷神之锤 | 5 | 连锁闪电：攻击可能伤害附近多个敌人 |
-| 暗影忍者 | 3 | 瞬移打击：快速传送攻击多个目标 |
-| 机械守卫 | 4 | 激光炮台：持续扫描攻击直线敌人 |
+| Card | Cost | Description |
+|------|------|-------------|
+| Cotton Knight | 2 | Shockwave on stop, knocks back nearby monsters |
+| Frost Archer | 3 | Frost arrows on stop, slows enemies and deals DoT |
+| Jelly Mage | 4 | Magic beam on stop, also burns the portal |
+| Soft Shield | 3 | Heavier and larger, higher collision damage, explodes on death |
+| Hellfire Mage | 5 | Burning attack, continuous beam, high-frequency damage numbers |
+| Healing Angel | 4 | Heals nearby allies on stop, attacks enemies if no allies |
+| Bomber | 3 | Auto-seeks enemies, explodes for high AoE damage |
+| Crazy Joker | 3 | Chaos impact, makes enemies attack indiscriminately |
+| Thor's Hammer | 5 | Chain lightning, can damage multiple nearby enemies |
+| Shadow Ninja | 3 | Teleport strike, fast teleport to attack multiple targets |
+| Mech Guard | 4 | Laser turret, continuously scans and attacks in a line |
 
-### 法术卡牌
+### Spell Cards
 
-| 卡牌 | 费用 | 描述 |
-|------|------|------|
-| 冰霜结界 | 4 | 放置在场地：减速范围内怪物一段时间 |
-| 甜辣火球 | 3 | 点选场地位置：爆炸伤害并击退 |
-| 城墙修补 | 2 | 立即回复城墙生命值（整局游戏限3次） |
-| 小充能 | 1 | 立即获得法术，并稍微提高回复速度 |
+| Card | Cost | Description |
+|------|------|-------------|
+| Frost Field | 4 | Place on arena: slows monsters in range for a duration |
+| Sweet Fireball | 3 | Click arena location: explosion damage and knockback |
+| Wall Repair | 2 | Instantly restore wall HP (limited to 3 uses per game) |
+| Small Charge | 1 | Instantly gain mana and slightly increase regeneration rate |
 
-## 🛠️ 技术栈
+## 🛠️ Tech Stack
 
-- **HTML5 Canvas** - 游戏渲染
-- **JavaScript (ES6)** - 游戏逻辑
-- **CSS3** - UI样式
-- **Web Audio API** - 音效系统
-- **LocalStorage** - 数据持久化
+- **HTML5 Canvas** - Game rendering
+- **JavaScript (ES6)** - Game logic
+- **CSS3** - UI styling
+- **Web Audio API** - Sound system
+- **LocalStorage** - Data persistence
 
-## 📁 项目结构
+## 📁 Project Structure
 
 ```
 smashpve/
-├── index.html          # 主页面
-├── style.css           # 样式文件
-├── game.js             # 游戏核心逻辑
-├── js/                 # 模块化代码（开发用）
-│   ├── config/         # 配置模块
-│   ├── core/           # 核心模块
-│   ├── systems/        # 系统模块
-│   ├── effects/        # 视觉效果
-│   └── entities/       # 实体类
-└── README.md           # 说明文档
+├── index.html          # Main page
+├── style.css           # Stylesheet
+├── game.js             # Core game logic
+├── js/                 # Modular code (for development)
+│   ├── config/         # Configuration modules
+│   ├── core/           # Core modules
+│   ├── systems/        # System modules
+│   ├── effects/        # Visual effects
+│   └── entities/       # Entity classes
+└── README.md           # Documentation
 ```
 
-## 🎯 游戏玩法
+## 🎯 Gameplay
 
-1. **选择卡牌**：从底部卡牌栏选择一张角色卡
-2. **拖拽发射**：在弹弓上拖拽并松手发射卡牌
-3. **守护传送门**：阻止怪物到达传送门
-4. **使用法术**：合理使用法术卡牌辅助战斗
-5. **升级加点**：通过击杀怪物获得金币，抽取新卡牌
+1. **Select Card**: Choose a role card from the bottom card bar
+2. **Drag & Launch**: Drag on the slingshot and release to launch the card
+3. **Defend Portal**: Prevent monsters from reaching the portal
+4. **Use Spells**: Strategically use spell cards to assist in battle
+5. **Upgrade**: Earn coins by killing monsters to draw new cards
 
-## 💾 存档系统
+## 💾 Save System
 
-- **云端存档**：登录用户数据自动保存到云端
-- **本地存档**：未登录用户使用本地存档
-- **多存档槽**：支持3个存档槽位
-- **跨设备同步**：登录后可在不同设备继续游戏
+- **Cloud Save**: Logged-in user data automatically saved to cloud
+- **Local Save**: Non-logged-in users use local save
+- **Multiple Save Slots**: Supports 3 save slots
+- **Cross-Device Sync**: Continue game on different devices after login
 
-## 🔧 开发说明
+## 🔧 Development Notes
 
-游戏已进行模块化重构，核心逻辑在 `game.js` 中，模块化代码在 `js/` 目录下供参考。
+The game has been refactored with modular structure. Core logic is in `game.js`, while modular code in `js/` directory is for reference.
 
-### 模块化结构
+### Modular Structure
 
-- `config/` - 游戏配置、卡牌数据
-- `core/` - 工具函数、游戏状态、游戏循环
-- `systems/` - 声音、认证、存档、生成系统
-- `effects/` - 伤害数字、粒子效果
-- `entities/` - 角色和怪物实体类
+- `config/` - Game configuration, card data
+- `core/` - Utility functions, game state, game loop
+- `systems/` - Sound, authentication, save, spawn systems
+- `effects/` - Damage numbers, particle effects
+- `entities/` - Role and monster entity classes
 
-## 📝 许可证
+## 📝 License
 
-本项目仅供学习和个人使用。
+This project is for learning and personal use only.
 
-## 🤝 贡献
+## 🤝 Contributing
 
-欢迎提交 Issue 和 Pull Request！
+Issues and Pull Requests are welcome!
 
-## 📧 联系方式
+## 📧 Contact
 
 - GitHub: [@SunsetzF2023](https://github.com/SunsetzF2023)
 
 ---
 
-**享受游戏！守护传送门，击败怪物大军！** 🏹⚔️
+**Enjoy the game! Defend the portal, defeat the monster army!** 🏹⚔️
